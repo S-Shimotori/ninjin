@@ -6,8 +6,8 @@ import (
 
 const xcodeSelectCommand string = "xcode-select"
 
-func execXcodeSelectSwitchOutput(developerDirectoryPath string) ([]byte, error) {
-	return exec.Command(xcodeSelectCommand, "-s", developerDirectoryPath).Output()
+func ExecXcodeSelectSwitchOutput(developerDirectoryPath string) ([]byte, error) {
+	return exec.Command("sudo", xcodeSelectCommand, "-s", developerDirectoryPath).Output()
 }
 
 func execXcodeSelectPrintOutput() ([]byte, error) {
