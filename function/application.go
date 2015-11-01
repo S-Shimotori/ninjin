@@ -1,7 +1,7 @@
 package function
 
+import "github.com/S-Shimotori/ninjin/model"
 import (
-	"../model"
 	"os"
 	"os/exec"
 	"encoding/xml"
