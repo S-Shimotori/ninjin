@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 )
 
-func listFiles(directoryPath string) ([]string, error) {
+func listApplications(directoryPath string) ([]string, error) {
 	result := []string{}
 	files, readError := ioutil.ReadDir(directoryPath)
 	if readError != nil {
@@ -12,7 +12,9 @@ func listFiles(directoryPath string) ([]string, error) {
 	}
 
 	for _, file := range files {
-		result = append(result, file.Name())
+		if isApplicationDirectory(directoryPath + "/" + file.Name()) {
+			result = append(result, file.Name())
+		}
 	}
 
 	return result, readError

@@ -5,16 +5,16 @@ import (
 	"reflect"
 )
 
-func TestListFiles(t *testing.T) {
+func TestListApplications(t *testing.T) {
 	var testCases = []struct {
 		directoryPath  string
 		expectedList []string
 	}{
-		{"../plists/Xcode.app/Contents/", []string{"Info.plist", "version.plist"}},
+		{"../plists/", []string{"Xcode.app"}},
 	}
 
 	for _, c := range testCases {
-		actualList, _ := listFiles(c.directoryPath)
+		actualList, _ := listApplications(c.directoryPath)
 
 		if !reflect.DeepEqual(actualList[:], c.expectedList[:]) {
 			t.Errorf("got %v\nwant %v", actualList, c.expectedList)

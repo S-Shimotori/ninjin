@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"encoding/xml"
+	"strings"
 )
 
 const applicationsPath string = "/Applications/"
@@ -14,6 +15,24 @@ const applicationNameKey string = "CFBundleExecutable"
 const shortVersionKey string = "CFBundleShortVersionString"
 const productBuildVersionKey string = "ProductBuildVersion"
 const plutilCommand string = "plutil"
+const appExtension = ".app"
+
+func isApplicationDirectory(filePath string) bool {
+	directoryInfo, directoryExistsError := os.Stat(filePath)
+	if directoryExistsError != nil {
+		return false
+	}
+	if !directoryInfo.IsDir() || !strings.HasSuffix(directoryInfo.Name(), appExtension) {
+		return false
+	}
+
+	_, plistExistsError := os.Stat(filePath + pathToInfoPlistPath)
+	if plistExistsError != nil {
+		return false
+	}
+
+	return true
+}
 
 func generateExtractCommand(key string, plistPath string) []string {
 	return []string{"-extract", key, "xml1", plistPath, "-o", "-"}
