@@ -33,10 +33,13 @@ func TestListApplications(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		actualList, _ := ListXcodes(c.directoryPath)
-
-		if !reflect.DeepEqual(actualList[:], c.expectedList[:]) {
-			t.Errorf("got %v\nwant %v", actualList, c.expectedList)
+		actualXcodejList, _ := ListXcodes(c.directoryPath)
+		actualStringList := []string{}
+		for _, xcode := range actualXcodejList {
+			actualStringList = append(actualStringList, xcode.AppName)
+		}
+		if !reflect.DeepEqual(actualStringList[:], c.expectedList[:]) {
+			t.Errorf("got %v\nwant %v", actualStringList, c.expectedList)
 		}
 	}
 }
