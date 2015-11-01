@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 )
 
-const ApplicationsPath string = "/Applications/"
+const ApplicationsPath string = "/Applications"
 
 func GenerateFullPathForFileInApplications(fileName string) string {
 	return ApplicationsPath + "/" + fileName

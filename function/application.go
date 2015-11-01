@@ -9,6 +9,7 @@ import (
 
 const pathToInfoPlistPath string = "/Contents/Info.plist"
 const pathToVersionPlistPath string = "/Contents/version.plist"
+const pathToDeveloperDirectoryPath string = "/Contents/Developer"
 const applicationNameKey string = "CFBundleExecutable"
 const shortVersionKey string = "CFBundleShortVersionString"
 const productBuildVersionKey string = "ProductBuildVersion"
@@ -32,11 +33,33 @@ func isApplicationDirectory(filePath string) bool {
 }
 
 func isXcode(appFilePath string) bool {
+	if !isApplicationDirectory(appFilePath) {
+		return false
+	}
+
 	appName, getNameError := getApplicationName(appFilePath)
 	if getNameError != nil || appName != "Xcode" {
 		return false
 	} else {
 		return true
+	}
+}
+
+func IsActiveXcode(appFileFullPath string) bool {
+	if !isXcode(appFileFullPath) {
+		return false
+	}
+
+	execOut, execError := execXcodeSelectPrintOutput()
+	if execError != nil {
+		return false
+	}
+
+	activeDeveloperDirectoryPath := strings.TrimSpace(string(execOut[:]))
+	if activeDeveloperDirectoryPath == appFileFullPath + pathToDeveloperDirectoryPath {
+		return true
+	} else {
+		return false
 	}
 }
 

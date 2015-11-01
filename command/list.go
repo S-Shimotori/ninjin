@@ -20,18 +20,23 @@ func (c *ListCommand) Run(args []string) int {
 	}
 
 	for _, xcode := range xcodeLists {
+		if function.IsActiveXcode(function.GenerateFullPathForFileInApplications(xcode)) {
+			fmt.Printf("* ")
+		} else {
+			fmt.Printf("  ")
+		}
 		shortVersion, buildVersion := function.GetVersions(function.GenerateFullPathForFileInApplications(xcode))
 		version := ""
 		switch {
 		case shortVersion != "" && buildVersion != "":
-			version = shortVersion + "\t" + buildVersion
+			version = shortVersion + " " + buildVersion
 		case shortVersion != "" && buildVersion == "":
-			version = shortVersion + "\t"
+			version = shortVersion + " "
 		case shortVersion == "" && buildVersion != "":
-			version = "\t" + buildVersion
+			version = " " + buildVersion
 		}
 
-		fmt.Printf("%s\t(%s)\n", xcode, version)
+		fmt.Printf("%s (%s)\n", xcode, version)
 	}
 	return 0
 }
