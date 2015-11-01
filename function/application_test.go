@@ -33,9 +33,9 @@ func TestListApplications(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		actualXcodejList, _ := ListXcodes(c.directoryPath)
+		actualXcodeList, _ := ListXcodes(c.directoryPath)
 		actualStringList := []string{}
-		for _, xcode := range actualXcodejList {
+		for _, xcode := range actualXcodeList {
 			actualStringList = append(actualStringList, xcode.AppName)
 		}
 		if !reflect.DeepEqual(actualStringList[:], c.expectedList[:]) {
