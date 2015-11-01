@@ -8,7 +8,6 @@ import (
 	"strings"
 )
 
-const applicationsPath string = "/Applications/"
 const pathToInfoPlistPath string = "/Contents/Info.plist"
 const pathToVersionPlistPath string = "/Contents/version.plist"
 const applicationNameKey string = "CFBundleExecutable"
@@ -38,10 +37,6 @@ func generateExtractCommand(key string, plistPath string) []string {
 	return []string{"-extract", key, "xml1", plistPath, "-o", "-"}
 }
 
-func generateFullPathForFileInApplications(fileName string) string {
-	return applicationsPath + fileName
-}
-
 func getApplicationName(appFilePath string) (string, error) {
 	infoPlistPath := appFilePath + pathToInfoPlistPath
 	_, existError := os.Stat(infoPlistPath)
@@ -60,7 +55,7 @@ func getApplicationName(appFilePath string) (string, error) {
 	return parseOut.String, parseError
 }
 
-func getVersions(appFilePath string) (string, string) {
+func GetVersions(appFilePath string) (string, string) {
 	shortVersion := ""
 	buildVersion := ""
 

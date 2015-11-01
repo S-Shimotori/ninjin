@@ -13,7 +13,7 @@ func TestGetVersions(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		actualShortVersion, actualBuildVersion := getVersions(plistsDirectory + c.appName)
+		actualShortVersion, actualBuildVersion := GetVersions(plistsDirectory + c.appName)
 		if actualShortVersion != c.expectedShortVersion {
 			t.Errorf("got %v\nwant %v", actualShortVersion, c.expectedShortVersion)
 		}

@@ -4,7 +4,13 @@ import (
 	"io/ioutil"
 )
 
-func listApplications(directoryPath string) ([]string, error) {
+const ApplicationsPath string = "/Applications/"
+
+func GenerateFullPathForFileInApplications(fileName string) string {
+	return ApplicationsPath + "/" + fileName
+}
+
+func ListApplications(directoryPath string) ([]string, error) {
 	result := []string{}
 	files, readError := ioutil.ReadDir(directoryPath)
 	if readError != nil {
