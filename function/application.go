@@ -3,7 +3,6 @@ package function
 import "github.com/S-Shimotori/ninjin/model"
 import (
 	"os"
-	"os/exec"
 	"encoding/xml"
 	"strings"
 )
@@ -13,7 +12,6 @@ const pathToVersionPlistPath string = "/Contents/version.plist"
 const applicationNameKey string = "CFBundleExecutable"
 const shortVersionKey string = "CFBundleShortVersionString"
 const productBuildVersionKey string = "ProductBuildVersion"
-const plutilCommand string = "plutil"
 const appExtension = ".app"
 
 func isApplicationDirectory(filePath string) bool {
@@ -42,10 +40,6 @@ func isXcode(appFilePath string) bool {
 	}
 }
 
-func generateExtractCommand(key string, plistPath string) []string {
-	return []string{"-extract", key, "xml1", plistPath, "-o", "-"}
-}
-
 func getApplicationName(appFilePath string) (string, error) {
 	infoPlistPath := appFilePath + pathToInfoPlistPath
 	_, existError := os.Stat(infoPlistPath)
@@ -53,12 +47,10 @@ func getApplicationName(appFilePath string) (string, error) {
 		return "", existError
 	}
 
-	options := generateExtractCommand(applicationNameKey, infoPlistPath)
-	execOut, execError := exec.Command(plutilCommand, options...).Output()
+	execOut, execError := execPlutilExtractOutput(applicationNameKey, infoPlistPath)
 	if execError != nil {
 		return "", execError
 	}
-
 	parseOut := model.Plist{}
 	parseError := xml.Unmarshal(execOut, &parseOut)
 	return parseOut.String, parseError
@@ -75,8 +67,7 @@ func GetVersions(appFilePath string) (string, string) {
 
 	switch {
 	case versionPlistExistError == nil:
-		buildVersionOptions := generateExtractCommand(productBuildVersionKey, versionPlistPath)
-		buildVersionExecOut, buildVersionExecError := exec.Command(plutilCommand, buildVersionOptions...).Output()
+		buildVersionExecOut, buildVersionExecError := execPlutilExtractOutput(productBuildVersionKey, versionPlistPath)
 		if buildVersionExecError == nil {
 			buildVersionParseOut := model.Plist{}
 			buildVersionParseError := xml.Unmarshal(buildVersionExecOut, &buildVersionParseOut)
@@ -84,8 +75,7 @@ func GetVersions(appFilePath string) (string, string) {
 				buildVersion = buildVersionParseOut.String
 			}
 		}
-		shortVersionOptions := generateExtractCommand(shortVersionKey, versionPlistPath)
-		shortVersionExecOut, shortVersionExecError := exec.Command(plutilCommand, shortVersionOptions...).Output()
+		shortVersionExecOut, shortVersionExecError := execPlutilExtractOutput(shortVersionKey, versionPlistPath)
 		if shortVersionExecError == nil {
 			shortVersionParseOut := model.Plist{}
 			shortVersionParseError := xml.Unmarshal(shortVersionExecOut, &shortVersionParseOut)
@@ -98,8 +88,7 @@ func GetVersions(appFilePath string) (string, string) {
 		fallthrough
 
 	case infoPlistExistError == nil:
-		shortVersionOptions := generateExtractCommand(shortVersionKey, infoPlistPath)
-		shortVersionExecOut, shortVersionExecError := exec.Command(plutilCommand, shortVersionOptions...).Output()
+		shortVersionExecOut, shortVersionExecError := execPlutilExtractOutput(shortVersionKey, infoPlistPath)
 		if shortVersionExecError == nil {
 			shortVersionParseOut := model.Plist{}
 			shortVersionParseError := xml.Unmarshal(shortVersionExecOut, &shortVersionParseOut)
