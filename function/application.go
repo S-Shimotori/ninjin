@@ -33,6 +33,15 @@ func isApplicationDirectory(filePath string) bool {
 	return true
 }
 
+func isXcode(appFilePath string) bool {
+	appName, getNameError := getApplicationName(appFilePath)
+	if getNameError != nil || appName != "Xcode" {
+		return false
+	} else {
+		return true
+	}
+}
+
 func generateExtractCommand(key string, plistPath string) []string {
 	return []string{"-extract", key, "xml1", plistPath, "-o", "-"}
 }

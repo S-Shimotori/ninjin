@@ -10,15 +10,16 @@ func GenerateFullPathForFileInApplications(fileName string) string {
 	return ApplicationsPath + "/" + fileName
 }
 
-func ListApplications(directoryPath string) ([]string, error) {
+func ListXcodes(rootPath string) ([]string, error) {
 	result := []string{}
-	files, readError := ioutil.ReadDir(directoryPath)
+	files, readError := ioutil.ReadDir(rootPath)
 	if readError != nil {
 		return result, readError
 	}
 
 	for _, file := range files {
-		if isApplicationDirectory(directoryPath + "/" + file.Name()) {
+		filePath := rootPath + "/" + file.Name()
+		if isApplicationDirectory(filePath) && isXcode(filePath) {
 			result = append(result, file.Name())
 		}
 	}
