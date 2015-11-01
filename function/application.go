@@ -8,8 +8,8 @@ import (
 )
 
 const applicationsPath string = "/Applications/"
-const infoPlistPath string = "/Contents/Info.plist"
-const versionPlistPath string = "/Contents/version.plist"
+const pathToInfoPlistPath string = "/Contents/Info.plist"
+const pathToVersionPlistPath string = "/Contents/version.plist"
 const applicationNameKey string = "CFBundleExecutable"
 const shortVersionKey string = "CFBundleShortVersionString"
 const productBuildVersionKey string = "ProductBuildVersion"
@@ -19,14 +19,18 @@ func generateExtractCommand(key string, plistPath string) []string {
 	return []string{"-extract", key, "xml1", plistPath, "-o", "-"}
 }
 
-func getApplicationName(appFileName string) (string, error) {
-	infoPlistFullPath := applicationsPath + appFileName + infoPlistPath
-	_, existError := os.Stat(infoPlistFullPath)
+func generateFullPathForFileInApplications(fileName string) string {
+	return applicationsPath + fileName
+}
+
+func getApplicationName(appFilePath string) (string, error) {
+	infoPlistPath := appFilePath + pathToInfoPlistPath
+	_, existError := os.Stat(infoPlistPath)
 	if existError != nil {
 		return "", existError
 	}
 
-	options := generateExtractCommand(applicationNameKey, infoPlistFullPath)
+	options := generateExtractCommand(applicationNameKey, infoPlistPath)
 	execOut, execError := exec.Command(plutilCommand, options...).Output()
 	if execError != nil {
 		return "", execError
@@ -37,18 +41,18 @@ func getApplicationName(appFileName string) (string, error) {
 	return parseOut.String, parseError
 }
 
-func getVersions(appFileName string) (string, string) {
+func getVersions(appFilePath string) (string, string) {
 	shortVersion := ""
 	buildVersion := ""
 
-	infoPlistFullPath := applicationsPath + appFileName + infoPlistPath
-	versionPlistFullPath := applicationsPath + appFileName + versionPlistPath
-	_, infoPlistExistError := os.Stat(infoPlistFullPath)
-	_, versionPlistExistError := os.Stat(versionPlistFullPath)
+	infoPlistPath := appFilePath + pathToInfoPlistPath
+	versionPlistPath := appFilePath + pathToVersionPlistPath
+	_, infoPlistExistError := os.Stat(infoPlistPath)
+	_, versionPlistExistError := os.Stat(versionPlistPath)
 
 	switch {
 	case versionPlistExistError == nil:
-		buildVersionOptions := generateExtractCommand(productBuildVersionKey, versionPlistFullPath)
+		buildVersionOptions := generateExtractCommand(productBuildVersionKey, versionPlistPath)
 		buildVersionExecOut, buildVersionExecError := exec.Command(plutilCommand, buildVersionOptions...).Output()
 		if buildVersionExecError == nil {
 			buildVersionParseOut := model.Plist{}
@@ -57,7 +61,7 @@ func getVersions(appFileName string) (string, string) {
 				buildVersion = buildVersionParseOut.String
 			}
 		}
-		shortVersionOptions := generateExtractCommand(shortVersionKey, versionPlistFullPath)
+		shortVersionOptions := generateExtractCommand(shortVersionKey, versionPlistPath)
 		shortVersionExecOut, shortVersionExecError := exec.Command(plutilCommand, shortVersionOptions...).Output()
 		if shortVersionExecError == nil {
 			shortVersionParseOut := model.Plist{}
@@ -71,7 +75,7 @@ func getVersions(appFileName string) (string, string) {
 		fallthrough
 
 	case infoPlistExistError == nil:
-		shortVersionOptions := generateExtractCommand(shortVersionKey, infoPlistFullPath)
+		shortVersionOptions := generateExtractCommand(shortVersionKey, infoPlistPath)
 		shortVersionExecOut, shortVersionExecError := exec.Command(plutilCommand, shortVersionOptions...).Output()
 		if shortVersionExecError == nil {
 			shortVersionParseOut := model.Plist{}
