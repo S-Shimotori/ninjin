@@ -6,135 +6,117 @@ import (
 	"encoding/xml"
 	"strings"
 	"io/ioutil"
+	"errors"
 )
 
 const ApplicationsPath string = "/Applications"
 const pathToInfoPlistPath string = "/Contents/Info.plist"
 const pathToVersionPlistPath string = "/Contents/version.plist"
-const pathToDeveloperDirectoryPath string = "/Contents/Developer"
+const PathToDeveloperDirectoryPath string = "/Contents/Developer"
 
 const applicationNameKey string = "CFBundleExecutable"
 const shortVersionKey string = "CFBundleShortVersionString"
 const productBuildVersionKey string = "ProductBuildVersion"
 
 const appExtension = ".app"
+const xcodeAppName = "Xcode"
 
-func isApplicationDirectory(filePath string) bool {
-	directoryInfo, directoryExistsError := os.Stat(filePath)
-	if directoryExistsError != nil {
-		return false
-	}
-	if !directoryInfo.IsDir() || !strings.HasSuffix(directoryInfo.Name(), appExtension) {
-		return false
-	}
-
-	_, plistExistsError := os.Stat(filePath + pathToInfoPlistPath)
-	if plistExistsError != nil {
-		return false
-	}
-
-	return true
-}
-
-func isXcode(appFilePath string) bool {
-	if !isApplicationDirectory(appFilePath) {
-		return false
-	}
-
-	execOut, execError := execPlutilExtractOutput(applicationNameKey, appFilePath + pathToInfoPlistPath)
-	if execError != nil {
-		return false
-	}
-
-	parseOut := model.Plist{}
-	parseError := xml.Unmarshal(execOut, &parseOut)
-	if parseError != nil || parseOut.String != "Xcode" {
-		return false
-	} else {
-		return true
-	}
-}
-
-func IsActiveXcode(appFileFullPath string) bool {
-	if !isXcode(appFileFullPath) {
-		return false
-	}
-
-	execOut, execError := execXcodeSelectPrintOutput()
-	if execError != nil {
-		return false
-	}
-
-	activeDeveloperDirectoryPath := strings.TrimSpace(string(execOut[:]))
-	if activeDeveloperDirectoryPath == appFileFullPath + pathToDeveloperDirectoryPath {
-		return true
-	} else {
-		return false
-	}
-}
-
-func GetVersions(appFilePath string) (string, string) {
-	shortVersion := ""
-	buildVersion := ""
-
-	infoPlistPath := appFilePath + pathToInfoPlistPath
+func getVersions(appFilePath string) (string, string) {
 	versionPlistPath := appFilePath + pathToVersionPlistPath
-	_, infoPlistExistError := os.Stat(infoPlistPath)
-	_, versionPlistExistError := os.Stat(versionPlistPath)
 
-	switch {
-	case versionPlistExistError == nil:
-		buildVersionExecOut, buildVersionExecError := execPlutilExtractOutput(productBuildVersionKey, versionPlistPath)
-		if buildVersionExecError == nil {
-			buildVersionParseOut := model.Plist{}
-			buildVersionParseError := xml.Unmarshal(buildVersionExecOut, &buildVersionParseOut)
-			if buildVersionParseError == nil {
-				buildVersion = buildVersionParseOut.String
-			}
-		}
-		shortVersionExecOut, shortVersionExecError := execPlutilExtractOutput(shortVersionKey, versionPlistPath)
-		if shortVersionExecError == nil {
-			shortVersionParseOut := model.Plist{}
-			shortVersionParseError := xml.Unmarshal(shortVersionExecOut, &shortVersionParseOut)
-			if shortVersionParseError == nil {
-				shortVersion = shortVersionParseOut.String
-				break
-			}
-		}
-
-		fallthrough
-
-	case infoPlistExistError == nil:
-		shortVersionExecOut, shortVersionExecError := execPlutilExtractOutput(shortVersionKey, infoPlistPath)
-		if shortVersionExecError == nil {
-			shortVersionParseOut := model.Plist{}
-			shortVersionParseError := xml.Unmarshal(shortVersionExecOut, &shortVersionParseOut)
-			if shortVersionParseError == nil {
-				shortVersion = shortVersionParseOut.String
-			}
-		}
+	shortVersionExecOut, shortVersionExecError := execPlutilExtractOutput(shortVersionKey, versionPlistPath)
+	buildVersionExecOut, buildVersionExecError := execPlutilExtractOutput(productBuildVersionKey, versionPlistPath)
+	if shortVersionExecError != nil || buildVersionExecError != nil {
+		return "", ""
 	}
 
-	return shortVersion, buildVersion
+	shortVersionParseOut := model.Plist{}
+	shortVersionParseError := xml.Unmarshal(shortVersionExecOut, &shortVersionParseOut)
+	buildVersionParseOut := model.Plist{}
+	buildVersionParseError := xml.Unmarshal(buildVersionExecOut, &buildVersionParseOut)
+	if shortVersionParseError != nil || buildVersionParseError != nil {
+		return "", ""
+	}
+
+	return shortVersionParseOut.String, buildVersionParseOut.String
 }
 
-func GenerateFullPathForFileInApplications(fileName string) string {
-	return ApplicationsPath + "/" + fileName
-}
-
-func ListXcodes(rootPath string) ([]string, error) {
-	result := []string{}
+func ListXcodes(rootPath string) ([]model.Xcode, error) {
+	result := []model.Xcode{}
 	files, readError := ioutil.ReadDir(rootPath)
 	if readError != nil {
 		return result, readError
 	}
 
 	for _, file := range files {
-		filePath := rootPath + "/" + file.Name()
-		if isXcode(filePath) {
-			result = append(result, file.Name())
+		xcode, generateError := GenerateXcode(rootPath + "/" + file.Name())
+		if generateError == nil {
+			result = append(result, xcode)
 		}
 	}
 
 	return result, readError
+}
+
+func GenerateXcode(appPath string) (model.Xcode, error) {
+	var xcode model.Xcode
+
+	//existsfile
+	appFileInfo, appExistsError := os.Stat(appPath)
+	if appExistsError != nil {
+		return xcode, appExistsError
+	}
+
+	//isAppDirectory?
+	if !appFileInfo.IsDir() || !strings.HasSuffix(appFileInfo.Name(), appExtension) {
+		return xcode, errors.New("not .app directory")
+	}
+
+	//isApplication?
+	_, infoExistsError := os.Stat(appPath + pathToInfoPlistPath)
+	if infoExistsError != nil {
+		return xcode, infoExistsError
+	}
+
+	//isXcode?
+	executableName, executableNameError := execPlutilExtractOutput(applicationNameKey, appPath + pathToInfoPlistPath)
+	if executableNameError != nil {
+		return xcode, executableNameError
+	}
+	_, versionExistsError := os.Stat(appPath + pathToInfoPlistPath)
+	if versionExistsError != nil {
+		return xcode, versionExistsError
+	}
+
+	parsedExecutableName := model.Plist{}
+	parseError := xml.Unmarshal(executableName, &parsedExecutableName)
+	if parseError != nil {
+		return xcode, parseError
+	}
+	if parsedExecutableName.String != xcodeAppName {
+		return xcode, errors.New("not Xcode")
+	}
+
+	shortVersion, buildVersion := getVersions(appPath)
+	if shortVersion == "" || buildVersion == "" {
+		return xcode, errors.New("not Xcode")
+	}
+
+	xcode = model.Xcode{
+		AppPath: appPath,
+		AppName: appFileInfo.Name(),
+		ShortVersion: shortVersion,
+		ProductBuildVersion: buildVersion,
+	}
+
+	return xcode, nil
+}
+
+func GetActiveDeveloperDirectoryPath() (string, error) {
+	execOut, execError := execXcodeSelectPrintOutput()
+	if execError != nil {
+		return "", execError
+	}
+
+	return strings.TrimSpace(string(execOut[:])), execError
 }

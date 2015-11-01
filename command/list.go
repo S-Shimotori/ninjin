@@ -19,24 +19,15 @@ func (c *ListCommand) Run(args []string) int {
 		os.Exit(1)
 	}
 
+	activeDeveloperDirectoryPath, _ := function.GetActiveDeveloperDirectoryPath()
 	for _, xcode := range xcodeLists {
-		if function.IsActiveXcode(function.GenerateFullPathForFileInApplications(xcode)) {
+		if activeDeveloperDirectoryPath == xcode.AppPath + function.PathToDeveloperDirectoryPath {
 			fmt.Printf("* ")
 		} else {
 			fmt.Printf("  ")
 		}
-		shortVersion, buildVersion := function.GetVersions(function.GenerateFullPathForFileInApplications(xcode))
-		version := ""
-		switch {
-		case shortVersion != "" && buildVersion != "":
-			version = shortVersion + " " + buildVersion
-		case shortVersion != "" && buildVersion == "":
-			version = shortVersion + " "
-		case shortVersion == "" && buildVersion != "":
-			version = " " + buildVersion
-		}
 
-		fmt.Printf("%s (%s)\n", xcode, version)
+		fmt.Printf("%s (%s %s)\n", xcode.AppName, xcode.ShortVersion, xcode.ProductBuildVersion)
 	}
 	return 0
 }
