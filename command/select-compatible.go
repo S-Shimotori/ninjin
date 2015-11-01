@@ -15,7 +15,7 @@ func (c *SelectCompatibleCommand) Run(args []string) int {
 }
 
 func (c *SelectCompatibleCommand) Synopsis() string {
-	return ""
+	return "select Xcode (compatible with [version])"
 }
 
 func (c *SelectCompatibleCommand) Help() string {

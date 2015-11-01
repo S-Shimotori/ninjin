@@ -15,7 +15,7 @@ func (c *ListCommand) Run(args []string) int {
 }
 
 func (c *ListCommand) Synopsis() string {
-	return ""
+	return "List Xcodes in /Applications"
 }
 
 func (c *ListCommand) Help() string {

@@ -15,7 +15,7 @@ func (c *SelectCommand) Run(args []string) int {
 }
 
 func (c *SelectCommand) Synopsis() string {
-	return ""
+	return "select Xcode (exactly [version])"
 }
 
 func (c *SelectCommand) Help() string {

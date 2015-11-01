@@ -15,7 +15,7 @@ func (c *SelectAtLeastCommand) Run(args []string) int {
 }
 
 func (c *SelectAtLeastCommand) Synopsis() string {
-	return ""
+	return "select Xcode (at least [version])"
 }
 
 func (c *SelectAtLeastCommand) Help() string {
