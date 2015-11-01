@@ -5,14 +5,18 @@ import (
 	"os"
 	"encoding/xml"
 	"strings"
+	"io/ioutil"
 )
 
+const ApplicationsPath string = "/Applications"
 const pathToInfoPlistPath string = "/Contents/Info.plist"
 const pathToVersionPlistPath string = "/Contents/version.plist"
 const pathToDeveloperDirectoryPath string = "/Contents/Developer"
+
 const applicationNameKey string = "CFBundleExecutable"
 const shortVersionKey string = "CFBundleShortVersionString"
 const productBuildVersionKey string = "ProductBuildVersion"
+
 const appExtension = ".app"
 
 func isApplicationDirectory(filePath string) bool {
@@ -37,8 +41,14 @@ func isXcode(appFilePath string) bool {
 		return false
 	}
 
-	appName, getNameError := getApplicationName(appFilePath)
-	if getNameError != nil || appName != "Xcode" {
+	execOut, execError := execPlutilExtractOutput(applicationNameKey, appFilePath + pathToInfoPlistPath)
+	if execError != nil {
+		return false
+	}
+
+	parseOut := model.Plist{}
+	parseError := xml.Unmarshal(execOut, &parseOut)
+	if parseError != nil || parseOut.String != "Xcode" {
 		return false
 	} else {
 		return true
@@ -61,22 +71,6 @@ func IsActiveXcode(appFileFullPath string) bool {
 	} else {
 		return false
 	}
-}
-
-func getApplicationName(appFilePath string) (string, error) {
-	infoPlistPath := appFilePath + pathToInfoPlistPath
-	_, existError := os.Stat(infoPlistPath)
-	if existError != nil {
-		return "", existError
-	}
-
-	execOut, execError := execPlutilExtractOutput(applicationNameKey, infoPlistPath)
-	if execError != nil {
-		return "", execError
-	}
-	parseOut := model.Plist{}
-	parseError := xml.Unmarshal(execOut, &parseOut)
-	return parseOut.String, parseError
 }
 
 func GetVersions(appFilePath string) (string, string) {
@@ -122,4 +116,25 @@ func GetVersions(appFilePath string) (string, string) {
 	}
 
 	return shortVersion, buildVersion
+}
+
+func GenerateFullPathForFileInApplications(fileName string) string {
+	return ApplicationsPath + "/" + fileName
+}
+
+func ListXcodes(rootPath string) ([]string, error) {
+	result := []string{}
+	files, readError := ioutil.ReadDir(rootPath)
+	if readError != nil {
+		return result, readError
+	}
+
+	for _, file := range files {
+		filePath := rootPath + "/" + file.Name()
+		if isXcode(filePath) {
+			result = append(result, file.Name())
+		}
+	}
+
+	return result, readError
 }
