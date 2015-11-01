@@ -6,14 +6,14 @@ import (
 
 func listFiles(directoryPath string) ([]string, error) {
 	result := []string{}
-	files, error := ioutil.ReadDir(directoryPath)
-	if error != nil {
-		return result, error
+	files, readError := ioutil.ReadDir(directoryPath)
+	if readError != nil {
+		return result, readError
 	}
 
 	for _, file := range files {
 		result = append(result, file.Name())
 	}
 
-	return result, error
+	return result, readError
 }
