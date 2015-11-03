@@ -1,10 +1,31 @@
-package model
+package function
 
 import (
-	"regexp"
+	"github.com/S-Shimotori/ninjin/model"
+	"sort"
 	"strings"
 	"strconv"
 )
+
+type XcodeSlice []model.Xcode
+func (p XcodeSlice) Len() int {
+	return len(p)
+}
+func (p XcodeSlice) Less(i, j int) bool {
+	if p[i].ShortVersion != p[j].ShortVersion {
+		return less(p[i].ShortVersion, p[j].ShortVersion)
+	} else if p[i].ProductBuildVersion != p[j].ProductBuildVersion {
+		return p[i].ProductBuildVersion < p[j].ProductBuildVersion
+	} else {
+		return true
+	}
+}
+func (p XcodeSlice) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+func (p XcodeSlice) Sort() {
+	sort.Sort(p)
+}
 
 func less(ver1, ver2 string) bool {
 	if IsVersion(ver1) && IsVersion(ver2) == false {
@@ -40,15 +61,4 @@ func less(ver1, ver2 string) bool {
 		}
 	}
 	return true
-}
-
-func IsVersion(str string) bool {
-	pattern := `^(0|[1-9]+[0-9]*)(\.(0|[1-9]+[0-9]*))*$`
-	result, error := regexp.MatchString(pattern, str)
-
-	if error != nil {
-		return false
-	}
-
-	return result
 }
