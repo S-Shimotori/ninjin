@@ -1,7 +1,9 @@
 package command
 
 import (
+	"github.com/S-Shimotori/ninjin/function"
 	"strings"
+	"fmt"
 )
 
 type SwitchLatestCommand struct {
@@ -10,8 +12,25 @@ type SwitchLatestCommand struct {
 
 func (c *SwitchLatestCommand) Run(args []string) int {
 	// Write your code here
+	xcodeLists, xcodesError := function.ListXcodes(function.ApplicationsPath)
+	if xcodesError != nil {
+		fmt.Println(xcodesError)
+		return 1
+	}
+	if len(xcodeLists) == 0 {
+		fmt.Printf("can't find Xcode(version %s)\n", args[0])
+		return 1
+	}
 
-	return 0
+	xcode := xcodeLists[len(xcodeLists) - 1]
+	_, execError := function.ExecXcodeSelectSwitchOutput(xcode.AppPath + function.PathToDeveloperDirectoryPath)
+	if execError == nil {
+		fmt.Printf("success.\n")
+		return 0
+	} else {
+		fmt.Println(execError)
+		return 1
+	}
 }
 
 func (c *SwitchLatestCommand) Synopsis() string {
