@@ -42,7 +42,7 @@ func getVersions(appFilePath string) (string, string) {
 }
 
 func ListXcodes(rootPath string) ([]model.Xcode, error) {
-	result := []model.Xcode{}
+	result := model.XcodeSlice{}
 	files, readError := ioutil.ReadDir(rootPath)
 	if readError != nil {
 		return result, readError
@@ -55,6 +55,7 @@ func ListXcodes(rootPath string) ([]model.Xcode, error) {
 		}
 	}
 
+	result.Sort()
 	return result, readError
 }
 
