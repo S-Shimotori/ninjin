@@ -16,9 +16,8 @@ func (p XcodeSlice) Len() int {
 	return len(p)
 }
 func (p XcodeSlice) Less(i, j int) bool {
-	// TODO: compare version
 	if p[i].ShortVersion != p[j].ShortVersion {
-		return p[i].ShortVersion < p[j].ShortVersion
+		return less(p[i].ShortVersion, p[j].ShortVersion)
 	} else if p[i].ProductBuildVersion != p[j].ProductBuildVersion {
 		return p[i].ProductBuildVersion < p[j].ProductBuildVersion
 	} else {
