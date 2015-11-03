@@ -12,23 +12,23 @@ func Commands(meta *command.Meta) map[string]cli.CommandFactory {
 				Meta: *meta,
 			}, nil
 		},
-		"select": func() (cli.Command, error) {
-			return &command.SelectCommand{
+		"switch": func() (cli.Command, error) {
+			return &command.SwitchCommand{
 				Meta: *meta,
 			}, nil
 		},
-		"select-at-least": func() (cli.Command, error) {
-			return &command.SelectAtLeastCommand{
+		"switch-at-least": func() (cli.Command, error) {
+			return &command.SwitchAtLeastCommand{
 				Meta: *meta,
 			}, nil
 		},
-		"select-compatible": func() (cli.Command, error) {
-			return &command.SelectCompatibleCommand{
+		"switch-compatible": func() (cli.Command, error) {
+			return &command.SwitchCompatibleCommand{
 				Meta: *meta,
 			}, nil
 		},
-		"select-latest": func() (cli.Command, error) {
-			return &command.SelectLatestCommand{
+		"switch-latest": func() (cli.Command, error) {
+			return &command.SwitchLatestCommand{
 				Meta: *meta,
 			}, nil
 		},

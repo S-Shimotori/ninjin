@@ -6,11 +6,11 @@ import (
 	"fmt"
 )
 
-type SelectCommand struct {
+type SwitchCommand struct {
 	Meta
 }
 
-func (c *SelectCommand) Run(args []string) int {
+func (c *SwitchCommand) Run(args []string) int {
 	// Write your code here
 	if len(args) == 0 {
 		fmt.Println("This command requires Xcode's version.")
@@ -38,11 +38,11 @@ func (c *SelectCommand) Run(args []string) int {
 	return 1
 }
 
-func (c *SelectCommand) Synopsis() string {
-	return "select Xcode (exactly [version])"
+func (c *SwitchCommand) Synopsis() string {
+	return "switch Xcode (exactly [version])"
 }
 
-func (c *SelectCommand) Help() string {
+func (c *SwitchCommand) Help() string {
 	helpText := `
 
 `
