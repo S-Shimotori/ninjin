@@ -23,6 +23,7 @@ func (c *SwitchCommand) Run(args []string) int {
 	}
 
 	for _, xcode := range xcodeLists {
+		// TODO: how to match Xcode's version
 		if xcode.ProductBuildVersion == args[0] || xcode.ShortVersion == args[0] {
 			_, execError := function.ExecXcodeSelectSwitchOutput(xcode.AppPath + function.PathToDeveloperDirectoryPath)
 			if execError == nil {
