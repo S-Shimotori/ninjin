@@ -28,7 +28,7 @@ func IsProductBuildVersion(str string) bool {
 	return result
 }
 
-func GetExtraCompatibleVersion(str string) string {
+func GetExcessCompatibleVersion(str string) string {
 	if IsShortVersion(str) {
 		nums := strings.Split(str, ".")
 

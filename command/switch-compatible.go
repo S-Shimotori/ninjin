@@ -16,7 +16,7 @@ func (c *SwitchCompatibleCommand) Run(args []string) int {
 		fmt.Println("This command requires Xcode's version.")
 		return 1
 	}
-	extraCompatibleVersion := function.GetExtraCompatibleVersion(args[0])
+	extraCompatibleVersion := function.GetExcessCompatibleVersion(args[0])
 
 	xcodeLists, xcodesError := function.ListXcodes(function.ApplicationsPath)
 	if xcodesError != nil {

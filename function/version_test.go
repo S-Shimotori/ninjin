@@ -60,7 +60,7 @@ func TestGetCompatibleVersion(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		result := GetExtraCompatibleVersion(c.str)
+		result := GetExcessCompatibleVersion(c.str)
 		if result != c.expected {
 			t.Errorf("got %v\nwant %v", result, c.expected)
 		}
