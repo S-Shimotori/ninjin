@@ -67,7 +67,7 @@ func TestLess(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		result := less(c.ver1, c.ver2)
+		result := Less(c.ver1, c.ver2)
 		if result != c.expected {
 			t.Errorf("got %v %v(%v)\nwant %v", c.ver1, c.ver2, result, c.expected)
 		}
