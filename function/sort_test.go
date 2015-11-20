@@ -6,6 +6,19 @@ import (
 	"reflect"
 )
 
+var versionList = [][]string{
+	{"7.0", "7A176x"},
+	{"7.0", "7A192o"},
+	{"7.0", "7A218"},
+	{"7.0.1", "7A1001"},
+	{"7.1", "7B75"},
+	{"7.1", "7B85"},
+	{"7.1", "7B91b"},
+	{"7.1.1", "7B1005"},
+	{"7.2", "7C46l"},
+	{"7.2", "7C46t"},
+}
+
 func TestSort(t *testing.T) {
 	var testCases = []struct {
 		testList [][]string
