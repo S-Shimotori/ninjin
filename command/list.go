@@ -27,7 +27,7 @@ func (c *ListCommand) Run(args []string) int {
 			fmt.Printf("  ")
 		}
 
-		fmt.Printf("%s (%s %s)\n", xcode.AppName, xcode.ShortVersion, xcode.ProductBuildVersion)
+		fmt.Printf("%s (%s %s)\n", xcode.AppName, xcode.Version.Short, xcode.Version.ProductBuild)
 	}
 	return 0
 }

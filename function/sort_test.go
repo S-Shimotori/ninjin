@@ -46,15 +46,14 @@ func TestSort(t *testing.T) {
 			xcode := model.Xcode{
 				AppPath: "",
 				AppName: "",
-				ShortVersion: versions[0],
-				ProductBuildVersion: versions[1],
+				Version: model.Version{versions[0], versions[1]},
 			}
 			actualXcodeList = append(actualXcodeList, xcode)
 		}
 		actualXcodeList.Sort()
 
 		for _, xcode := range actualXcodeList {
-			actualStringList = append(actualStringList, []string{xcode.ShortVersion, xcode.ProductBuildVersion})
+			actualStringList = append(actualStringList, []string{xcode.Version.Short, xcode.Version.ProductBuild})
 		}
 		if !reflect.DeepEqual(actualStringList[:], arrays.expectedList[:]) {
 			t.Errorf("got %v\nwant %v", actualStringList, arrays.expectedList)

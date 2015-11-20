@@ -12,10 +12,10 @@ func (p XcodeSlice) Len() int {
 	return len(p)
 }
 func (p XcodeSlice) Less(i, j int) bool {
-	if p[i].ShortVersion != p[j].ShortVersion {
-		return Less(p[i].ShortVersion, p[j].ShortVersion)
-	} else if p[i].ProductBuildVersion != p[j].ProductBuildVersion {
-		return p[i].ProductBuildVersion < p[j].ProductBuildVersion
+	if p[i].Version.Short != p[j].Version.Short {
+		return Less(p[i].Version.Short, p[j].Version.Short)
+	} else if p[i].Version.ProductBuild != p[j].Version.ProductBuild {
+		return p[i].Version.ProductBuild < p[j].Version.ProductBuild
 	} else {
 		return true
 	}
@@ -28,7 +28,7 @@ func (p XcodeSlice) Sort() {
 }
 
 func Less(ver1, ver2 string) bool {
-	if IsShortVersion(ver1) && IsShortVersion(ver2) {
+	if model.IsShortVersion(ver1) && model.IsShortVersion(ver2) {
 		nums1 := strings.Split(ver1, ".")
 		nums2 := strings.Split(ver2, ".")
 
@@ -59,7 +59,7 @@ func Less(ver1, ver2 string) bool {
 		}
 		return true
 
-	} else if IsProductBuildVersion(ver1) && IsProductBuildVersion(ver2) {
+	} else if model.IsProductBuildVersion(ver1) && model.IsProductBuildVersion(ver2) {
 		return ver1 < ver2
 
 	} else {

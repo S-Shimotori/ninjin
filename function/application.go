@@ -103,11 +103,15 @@ func GenerateXcode(appPath string) (model.Xcode, error) {
 		return xcode, errors.New("not Xcode")
 	}
 
+	version, versionError := model.NewVersion(shortVersion, buildVersion)
+	if versionError != nil {
+		return xcode, versionError
+	}
+
 	xcode = model.Xcode{
 		AppPath: appPath,
 		AppName: appFileInfo.Name(),
-		ShortVersion: shortVersion,
-		ProductBuildVersion: buildVersion,
+		Version: version,
 	}
 
 	return xcode, nil

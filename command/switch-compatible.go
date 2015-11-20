@@ -25,11 +25,11 @@ func (c *SwitchCompatibleCommand) Run(args []string) int {
 	}
 	fmt.Printf("%s\n", extraCompatibleVersion)
 	for i := len(xcodeLists) - 1; i >= 0; i-- {
-		fmt.Println(xcodeLists[i].ShortVersion)
+		fmt.Println(xcodeLists[i].Version.Short)
 		//TODO: イコールの排除
-		if (function.IsShortVersion(args[0]) && function.Less(args[0], xcodeLists[i].ShortVersion) ||
-			function.IsProductBuildVersion(args[0]) && function.Less(args[0], xcodeLists[i].ProductBuildVersion)) &&
-		function.Less(xcodeLists[i].ShortVersion, extraCompatibleVersion) {
+		if (function.IsShortVersion(args[0]) && function.Less(args[0], xcodeLists[i].Version.Short) ||
+			function.IsProductBuildVersion(args[0]) && function.Less(args[0], xcodeLists[i].Version.ProductBuild)) &&
+		function.Less(xcodeLists[i].Version.Short, extraCompatibleVersion) {
 			_, execError := function.ExecXcodeSelectSwitchOutput(xcodeLists[i].AppPath + function.PathToDeveloperDirectoryPath)
 			if execError == nil {
 				fmt.Printf("success.\n")

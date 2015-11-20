@@ -23,7 +23,7 @@ func (c *SwitchAtLeastCommand) Run(args []string) int {
 	}
 
 	for i := len(xcodeLists) - 1; i >= 0; i-- {
-		if function.Less(args[0], xcodeLists[i].ShortVersion) {
+		if function.Less(args[0], xcodeLists[i].Version.Short) {
 			_, execError := function.ExecXcodeSelectSwitchOutput(xcodeLists[i].AppPath + function.PathToDeveloperDirectoryPath)
 			if execError == nil {
 				fmt.Printf("success.\n")
