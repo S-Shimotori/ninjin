@@ -47,7 +47,7 @@ func (c *SwitchCompatibleCommand) Run(args []string) int {
 			}
 		}
 
-		fmt.Printf(FailInFindingXcodeCompatible, model.GetShortVersionInString(excess))
+		fmt.Printf(FailInFindingXcodeCompatible, model.GetShortVersionInString(v))
 	} else if model.IsProductBuildVersion(args[0]) {
 		v, _ := model.NewProductBuildVersion(args[0])
 		excess, excessError := model.GetExcessCompatibleProductBuildVersion(args[0])
@@ -79,7 +79,7 @@ func (c *SwitchCompatibleCommand) Run(args []string) int {
 			}
 		}
 
-		fmt.Printf(FailInFindingXcodeCompatible, model.GetProductBuildVersionInString(excess))
+		fmt.Printf(FailInFindingXcodeCompatible, model.GetProductBuildVersionInString(v))
 	} else {
 		fmt.Printf(FailInGetVersion)
 	}
