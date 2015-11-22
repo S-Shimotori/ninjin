@@ -14,12 +14,12 @@ type SwitchCommand struct {
 func (c *SwitchCommand) Run(args []string) int {
 	// Write your code here
 	if len(args) == 0 {
-		fmt.Println("This command requires Xcode's version.")
+		fmt.Printf(FailInGetVersion)
 		return 1
 	}
 	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
 	if xcodeError != nil {
-		fmt.Println(xcodeError)
+		fmt.Printf(FailInMakingAListOfXcodes)
 		return 1
 	}
 	if model.IsShortVersion(args[0]) {
@@ -29,15 +29,15 @@ func (c *SwitchCommand) Run(args []string) int {
 			if xcode.Version.Short == v {
 				_, execError := function.ExecXcodeSelectSwitchOutput(xcode.AppPath + function.PathToDeveloperDirectoryPath)
 				if execError == nil {
-					fmt.Printf("success.\n")
+					fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcode.Version.Short), model.GetProductBuildVersionInString(xcode.Version.ProductBuild))
 					return 0
 				} else {
-					fmt.Println(execError)
+					fmt.Printf(FailInSwitching, model.GetShortVersionInString(v))
 					return 1
 				}
 			}
 		}
-		fmt.Printf("can't find Xcode(version %s)\n", model.GetShortVersionInString(v))
+		fmt.Printf(FailInFindingXcode, model.GetShortVersionInString(v))
 	} else if model.IsProductBuildVersion(args[0]) {
 		v, _ := model.NewProductBuildVersion(args[0])
 		for _, xcode := range xcodeLists {
@@ -45,17 +45,17 @@ func (c *SwitchCommand) Run(args []string) int {
 			if xcode.Version.ProductBuild == v {
 				_, execError := function.ExecXcodeSelectSwitchOutput(xcode.AppPath + function.PathToDeveloperDirectoryPath)
 				if execError == nil {
-					fmt.Printf("success.\n")
+					fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcode.Version.Short), model.GetProductBuildVersionInString(xcode.Version.ProductBuild))
 					return 0
 				} else {
-					fmt.Println(execError)
+					fmt.Printf(FailInSwitching, model.GetProductBuildVersionInString(v))
 					return 1
 				}
 			}
 		}
-		fmt.Printf("can't find Xcode(version %s)\n", model.GetProductBuildVersionInString(v))
+		fmt.Printf(FailInFindingXcode, model.GetProductBuildVersionInString(v))
 	} else {
-		fmt.Println("This command requires Xcode's valid version.")
+		fmt.Printf(FailInGetVersion)
 	}
 	return 1
 }

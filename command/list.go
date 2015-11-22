@@ -16,7 +16,7 @@ func (c *ListCommand) Run(args []string) int {
 	// Write your code here
 	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
 	if xcodeError != nil {
-		fmt.Println(xcodeError)
+		fmt.Printf(FailInMakingAListOfXcodes)
 		os.Exit(1)
 	}
 

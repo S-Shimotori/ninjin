@@ -56,7 +56,7 @@ func GetXcodeList(rootPath string) ([]model.Xcode, error) {
 	}
 
 	result.Sort()
-	return result, readError
+	return result, nil
 }
 
 func GenerateXcode(appPath string) (model.Xcode, error) {

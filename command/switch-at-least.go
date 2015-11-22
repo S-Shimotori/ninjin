@@ -14,19 +14,19 @@ type SwitchAtLeastCommand struct {
 func (c *SwitchAtLeastCommand) Run(args []string) int {
 	// Write your code here
 	if len(args) == 0 {
-		fmt.Println("This command requires Xcode's version.")
+		fmt.Printf(FailInGetVersion)
 		return 1
 	}
 
 	//TODO: ProductBuildVersion
 	short, shortError := model.NewShortVersion(args[0])
 	if shortError != nil {
-		fmt.Println("This command requires Xcode's version.")
+		fmt.Printf(FailInGetVersion)
 		return 1
 	}
 	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
 	if xcodeError != nil {
-		fmt.Println(xcodeError)
+		fmt.Printf(FailInMakingAListOfXcodes)
 		return 1
 	}
 
@@ -35,15 +35,15 @@ func (c *SwitchAtLeastCommand) Run(args []string) int {
 		if model.LessForShortVersion(short, xcodeLists[i].Version.Short) {
 			_, execError := function.ExecXcodeSelectSwitchOutput(xcodeLists[i].AppPath + function.PathToDeveloperDirectoryPath)
 			if execError == nil {
-				fmt.Printf("success.\n")
+				fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcodeLists[i].Version.Short), model.GetProductBuildVersionInString(xcodeLists[i].Version.ProductBuild))
 				return 0
 			} else {
-				fmt.Println(execError)
+				fmt.Printf(FailInSwitching, model.GetShortVersionInString(xcodeLists[i].Version.Short))
 				return 1
 			}
 		}
 	}
-	fmt.Printf("can't find Xcode(version %s)\n", model.GetShortVersionInString(short))
+	fmt.Printf(FailInFindingXcodeAtLeast, model.GetShortVersionInString(short))
 	return 1
 }
 
