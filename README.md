@@ -2,11 +2,43 @@
 
 Why don't we have :ninjin: !!?!?!?!?!?!??!?
 
-```ninjin``` will call ```xcode-select -s``` .
-
 ## Description
 
+```ninjin``` calls ```xcode-select -s``` .
+
+```xcode-select -h``` :  
+> Print or change the path to the active developer directory. This directory controls which tools are used for the Xcode command line tools (for example, xcodebuild) as well as the BSD development commands (such as cc and make).
+
 ## Usage
+
+```sh
+$ ninjin list
+  Xcode.app (7.1.1 7B1005)
+* Xcode-beta.app (7.2 7C62b)
+```
+
+```sh
+$ ninjin switch 7.1.1
+Password:
+succeed in switching to Xcode(version 7.1.1 7B1005)
+$ ninjin switch 7C62b
+succeed in switching to Xcode(version 7.2 7C62b)
+```
+
+```sh
+$ ninjin switch-at-least 7.1
+succeed in switching to Xcode(version 7.2 7C62b)
+```
+
+```sh
+$ ninjin switch-compatible 7.1.0
+succeed in switching to Xcode(version 7.1.1 7B1005)
+```
+
+```sh
+$ ninjin switch-latest
+succeed in switching to Xcode(version 7.2 7C62b)
+```
 
 ## Install
 
