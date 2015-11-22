@@ -1,46 +1,29 @@
 package model
 
 import (
-	"regexp"
-	"errors"
+	"sort"
 )
-
-type Version struct {
-	Short string
-	ProductBuild string
-}
-
-func IsShortVersion(str string) bool {
-	pattern := `^(0|[1-9]+[0-9]*)(\.(0|[1-9]+[0-9]*))*$`
-	result, matchError := regexp.MatchString(pattern, str)
-
-	if matchError != nil {
-		return false
-	}
-
-	return result
-}
-
-func IsProductBuildVersion(str string) bool {
-	pattern := `^[1-9][0-9]*[A-Z][0-9a-z]+$`
-	result, matchError := regexp.MatchString(pattern, str)
-
-	if matchError != nil {
-		return false
-	}
-
-	return result
-}
-func NewVersion(shortVersion string, productBuildVersion string) (Version, error) {
-	if IsShortVersion(shortVersion) && IsProductBuildVersion(productBuildVersion) {
-		return Version{Short: shortVersion, ProductBuild: productBuildVersion}, nil
-	} else {
-		return Version{}, errors.New("invalid version")
-	}
-}
 
 type Xcode struct {
 	AppPath string
 	AppName string
-	Version Version
+	Version version
+}
+
+type XcodeSlice []Xcode
+
+func (p XcodeSlice) Len() int {
+	return len(p)
+}
+
+func (p XcodeSlice) Less(i, j int) bool {
+	return Less(p[i].Version, p[j].Version)
+}
+
+func (p XcodeSlice) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+func (p XcodeSlice) Sort() {
+	sort.Sort(p)
 }

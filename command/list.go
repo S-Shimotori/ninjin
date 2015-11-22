@@ -5,6 +5,7 @@ import (
 	"strings"
 	"fmt"
 	"os"
+	"github.com/S-Shimotori/ninjin/model"
 )
 
 type ListCommand struct {
@@ -27,7 +28,7 @@ func (c *ListCommand) Run(args []string) int {
 			fmt.Printf("  ")
 		}
 
-		fmt.Printf("%s (%s %s)\n", xcode.AppName, xcode.Version.Short, xcode.Version.ProductBuild)
+		fmt.Printf("%s (%s %s)\n", xcode.AppName, model.GetShortVersionInString(xcode.Version.Short), model.GetProductBuildVersionInString(xcode.Version.ProductBuild))
 	}
 	return 0
 }

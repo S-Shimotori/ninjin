@@ -2,48 +2,64 @@ package model
 
 import (
 	"testing"
+	"reflect"
+	"math/rand"
 )
 
-func TestIsVersion(t *testing.T) {
-	var testCases = []struct {
-		str string
-		expected bool
-	}{
-		{"10", true},
-		{"10.0", true},
-		{"10.0.0", true},
-		{"10.10", true},
-		{"10", true},
-		{".", false},
-		{"10.", false},
-		{"10..0", false},
-		{"10.0.", false},
-		{"00", false},
-		{"10.00", false},
-	}
-
-	for _, c := range testCases {
-		result := IsShortVersion(c.str)
-		if result != c.expected {
-			t.Errorf("got %v(%v)\nwant %v", c.str, result, c.expected)
-		}
-	}
+var versions = []version{
+	newVersionWithoutError("7.0", "7A176x"),
+	newVersionWithoutError("7.0", "7A192o"),
+	newVersionWithoutError("7.0", "7A218"),
+	newVersionWithoutError("7.0.1", "7A1001"),
+	newVersionWithoutError("7.1", "7B75"),
+	newVersionWithoutError("7.1", "7B85"),
+	newVersionWithoutError("7.1", "7B91b"),
+	newVersionWithoutError("7.1.1", "7B1005"),
+	newVersionWithoutError("7.2", "7C46l"),
+	newVersionWithoutError("7.2", "7C46t"),
 }
 
-func TestIsProductBuildVersion(t *testing.T) {
-	var testCases = []struct {
-		str string
-		expected bool
-	}{
-		{"7A1001", true},
-		{"7B91b", true},
-		{"7C46l", true},
+func TestSort(t *testing.T) {
+	ascending := make([]version, len(versions))
+	copy(ascending, versions)
+
+	descending := make([]version, len(versions))
+	copy(descending, versions)
+	for i, j := 0, len(descending) - 1; i < j; i, j = i + 1, j - 1 {
+		descending[i], descending[j] = descending[j], descending[i]
+	}
+	var reverse []version = make([]version, len(versions))
+	perm := rand.Perm(len(reverse))
+	for i, v := range perm {
+		reverse[v] = versions[i]
 	}
 
-	for _, c := range testCases {
-		result := IsProductBuildVersion(c.str)
-		if result != c.expected {
-			t.Errorf("got %v(%v)\nwant %v", c.str, result, c.expected)
+	testList := [][]version{
+		ascending,
+		descending,
+		reverse,
+	}
+
+	for _, array := range testList {
+		actualXcodeList := XcodeSlice{}
+
+		for _, version := range array {
+			xcode := Xcode{
+				AppPath: "",
+				AppName: "",
+				Version: version,
+			}
+			actualXcodeList = append(actualXcodeList, xcode)
+		}
+
+		actualXcodeList.Sort()
+		actualVersionList := []version{}
+		for _, xcode := range actualXcodeList {
+			actualVersionList = append(actualVersionList, xcode.Version)
+		}
+
+		if !reflect.DeepEqual(actualVersionList[:], versions) {
+			t.Errorf("got %v\nwant %v", actualVersionList[:], versions)
 		}
 	}
 }

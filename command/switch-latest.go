@@ -18,7 +18,7 @@ func (c *SwitchLatestCommand) Run(args []string) int {
 		return 1
 	}
 	if len(xcodeLists) == 0 {
-		fmt.Printf("can't find Xcode(version %s)\n", args[0])
+		fmt.Printf("can't find Xcode\n")
 		return 1
 	}
 
