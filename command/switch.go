@@ -24,12 +24,12 @@ func (c *SwitchCommand) Run(args []string) int {
 	}
 	if model.IsShortVersion(args[0]) {
 		v, _ := model.NewShortVersion(args[0])
-		for _, xcode := range xcodeLists {
-			// TODO: how to match Xcode's version
-			if xcode.Version.Short == v {
-				_, execError := function.ExecXcodeSelectSwitchOutput(xcode.AppPath + function.PathToDeveloperDirectoryPath)
+
+		for i := len(xcodeLists) - 1; i >= 0; i-- {
+			if model.EqualsForShortVersion(xcodeLists[i].Version.Short, v) {
+				_, execError := function.ExecXcodeSelectSwitchOutput(xcodeLists[i].AppPath + function.PathToDeveloperDirectoryPath)
 				if execError == nil {
-					fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcode.Version.Short), model.GetProductBuildVersionInString(xcode.Version.ProductBuild))
+					fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcodeLists[i].Version.Short), model.GetProductBuildVersionInString(xcodeLists[i].Version.ProductBuild))
 					return 0
 				} else {
 					fmt.Printf(FailInSwitching, model.GetShortVersionInString(v))
@@ -41,8 +41,7 @@ func (c *SwitchCommand) Run(args []string) int {
 	} else if model.IsProductBuildVersion(args[0]) {
 		v, _ := model.NewProductBuildVersion(args[0])
 		for _, xcode := range xcodeLists {
-			// TODO: how to match Xcode's version
-			if xcode.Version.ProductBuild == v {
+			if model.EqualsForProductBuildVersion(xcode.Version.ProductBuild, v) {
 				_, execError := function.ExecXcodeSelectSwitchOutput(xcode.AppPath + function.PathToDeveloperDirectoryPath)
 				if execError == nil {
 					fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcode.Version.Short), model.GetProductBuildVersionInString(xcode.Version.ProductBuild))
