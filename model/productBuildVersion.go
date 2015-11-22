@@ -15,6 +15,10 @@ type productBuildVersion struct {
 func NewProductBuildVersion(str string) (productBuildVersion, error) {
 	var productBuild productBuildVersion
 
+	if !IsProductBuildVersion(str) {
+		return productBuild, errors.New("invalid version")
+	}
+
 	mainRegexp := regexp.MustCompile("^([1-9][0-9]*)([A-Z])")
 	main := mainRegexp.FindSubmatch([]byte(str))
 	if len(main) < 3 {
@@ -52,7 +56,7 @@ func EqualsForProductBuildVersion(pb0, pb1 productBuildVersion) bool {
 }
 
 func IsProductBuildVersion(str string) bool {
-	pattern := `^[1-9][0-9]*[A-Z]`
+	pattern := `^[1-9][0-9]*[A-Z]([0-9a-z]*)$`
 	result, matchError := regexp.MatchString(pattern, str)
 
 	if matchError != nil {

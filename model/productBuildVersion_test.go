@@ -19,7 +19,7 @@ func TestNewProductBuildVersion(t *testing.T) {
 
 		{"aA0", productBuildVersion{}},
 		{"7a0", productBuildVersion{}},
-		{"7A-", productBuildVersion{7, "A", ""}},
+		{"7A-", productBuildVersion{}},
 
 		{"A0", productBuildVersion{}},
 	}
@@ -49,7 +49,7 @@ func TestIsProductBuildVersion(t *testing.T) {
 
 		{"aA0", false},
 		{"7a0", false},
-		{"7A-", true},
+		{"7A-", false},
 
 		{"A0", false},
 	}
@@ -77,7 +77,7 @@ func TestGetExcessCompatibleProductBuildVersion(t *testing.T) {
 
 		{"aA0", productBuildVersion{}},
 		{"7a0", productBuildVersion{}},
-		{"7A-", productBuildVersion{8, "A", ""}},
+		{"7A-", productBuildVersion{}},
 
 		{"A0", productBuildVersion{}},
 	}
