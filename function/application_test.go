@@ -33,7 +33,7 @@ func TestListApplications(t *testing.T) {
 	}
 
 	for _, c := range testCases {
-		actualXcodeList, _ := ListXcodes(c.directoryPath)
+		actualXcodeList, _ := GetXcodeList(c.directoryPath)
 		actualStringList := []string{}
 		for _, xcode := range actualXcodeList {
 			actualStringList = append(actualStringList, xcode.AppName)

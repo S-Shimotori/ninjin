@@ -12,9 +12,9 @@ type SwitchLatestCommand struct {
 
 func (c *SwitchLatestCommand) Run(args []string) int {
 	// Write your code here
-	xcodeLists, xcodesError := function.ListXcodes(function.ApplicationsPath)
-	if xcodesError != nil {
-		fmt.Println(xcodesError)
+	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
+	if xcodeError != nil {
+		fmt.Println(xcodeError)
 		return 1
 	}
 	if len(xcodeLists) == 0 {

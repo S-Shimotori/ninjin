@@ -41,7 +41,7 @@ func getVersions(appFilePath string) (string, string) {
 	return shortVersionParseOut.String, buildVersionParseOut.String
 }
 
-func ListXcodes(rootPath string) ([]model.Xcode, error) {
+func GetXcodeList(rootPath string) ([]model.Xcode, error) {
 	result := model.XcodeSlice{}
 	files, readError := ioutil.ReadDir(rootPath)
 	if readError != nil {

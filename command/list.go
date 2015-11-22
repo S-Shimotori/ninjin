@@ -14,9 +14,9 @@ type ListCommand struct {
 
 func (c *ListCommand) Run(args []string) int {
 	// Write your code here
-	xcodeLists, xcodesError := function.ListXcodes(function.ApplicationsPath)
-	if xcodesError != nil {
-		fmt.Println(xcodesError)
+	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
+	if xcodeError != nil {
+		fmt.Println(xcodeError)
 		os.Exit(1)
 	}
 

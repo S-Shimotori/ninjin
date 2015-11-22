@@ -25,7 +25,7 @@ func (c *SwitchCompatibleCommand) Run(args []string) int {
 			return 1
 		}
 
-		xcodeLists, xcodeError := function.ListXcodes(function.ApplicationsPath)
+		xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
 		if xcodeError != nil {
 			fmt.Println(xcodeError)
 			return 1
@@ -55,7 +55,7 @@ func (c *SwitchCompatibleCommand) Run(args []string) int {
 			return 1
 		}
 
-		xcodeLists, xcodeError := function.ListXcodes(function.ApplicationsPath)
+		xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
 		if xcodeError != nil {
 			fmt.Println(xcodeError)
 			return 1

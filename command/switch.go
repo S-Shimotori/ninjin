@@ -17,9 +17,9 @@ func (c *SwitchCommand) Run(args []string) int {
 		fmt.Println("This command requires Xcode's version.")
 		return 1
 	}
-	xcodeLists, xcodesError := function.ListXcodes(function.ApplicationsPath)
-	if xcodesError != nil {
-		fmt.Println(xcodesError)
+	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
+	if xcodeError != nil {
+		fmt.Println(xcodeError)
 		return 1
 	}
 	if model.IsShortVersion(args[0]) {
