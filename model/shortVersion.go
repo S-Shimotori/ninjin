@@ -80,14 +80,17 @@ func GetExcessCompatibleShortVersion(str string) (shortVersion, error) {
 				return short, nil
 			}
 		}
+
 		short, shortError := NewShortVersion(str)
 		if shortError != nil {
 			return short, shortError
 		}
+
 		short.major += 1
 		short.minor = 0
 		short.patch = 0
 		return short, nil
+
 	} else {
 		return short, errors.New("not short version")
 	}

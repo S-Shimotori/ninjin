@@ -1,11 +1,11 @@
 package command
 
 import (
+	"github.com/S-Shimotori/ninjin/model"
 	"github.com/S-Shimotori/ninjin/function"
 	"strings"
 	"fmt"
 	"os"
-	"github.com/S-Shimotori/ninjin/model"
 )
 
 type ListCommand struct {
@@ -13,15 +13,14 @@ type ListCommand struct {
 }
 
 func (c *ListCommand) Run(args []string) int {
-	// Write your code here
-	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
+	xcodeList, xcodeError := function.GetXcodeList(function.ApplicationsPath)
 	if xcodeError != nil {
 		fmt.Printf(FailInMakingAListOfXcodes)
 		os.Exit(1)
 	}
 
 	activeDeveloperDirectoryPath, _ := function.GetActiveDeveloperDirectoryPath()
-	for _, xcode := range xcodeLists {
+	for _, xcode := range xcodeList {
 		if activeDeveloperDirectoryPath == xcode.AppPath + function.PathToDeveloperDirectoryPath {
 			fmt.Printf("* ")
 		} else {

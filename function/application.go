@@ -1,7 +1,7 @@
 package function
 
-import "github.com/S-Shimotori/ninjin/model"
 import (
+	"github.com/S-Shimotori/ninjin/model"
 	"os"
 	"encoding/xml"
 	"strings"
@@ -43,6 +43,7 @@ func getVersions(appFilePath string) (string, string) {
 
 func GetXcodeList(rootPath string) ([]model.Xcode, error) {
 	result := model.XcodeSlice{}
+
 	files, readError := ioutil.ReadDir(rootPath)
 	if readError != nil {
 		return result, readError

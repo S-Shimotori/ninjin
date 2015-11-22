@@ -1,10 +1,10 @@
 package command
 
 import (
+	"github.com/S-Shimotori/ninjin/model"
 	"github.com/S-Shimotori/ninjin/function"
 	"strings"
 	"fmt"
-	"github.com/S-Shimotori/ninjin/model"
 )
 
 type SwitchCommand struct {
@@ -12,24 +12,25 @@ type SwitchCommand struct {
 }
 
 func (c *SwitchCommand) Run(args []string) int {
-	// Write your code here
 	if len(args) == 0 {
 		fmt.Printf(FailInGetVersion)
 		return 1
 	}
-	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
+
+	xcodeList, xcodeError := function.GetXcodeList(function.ApplicationsPath)
 	if xcodeError != nil {
 		fmt.Printf(FailInMakingAListOfXcodes)
 		return 1
 	}
+
 	if model.IsShortVersion(args[0]) {
 		v, _ := model.NewShortVersion(args[0])
 
-		for i := len(xcodeLists) - 1; i >= 0; i-- {
-			if model.EqualsForShortVersion(xcodeLists[i].Version.Short, v) {
-				_, execError := function.ExecXcodeSelectSwitchOutput(xcodeLists[i].AppPath + function.PathToDeveloperDirectoryPath)
+		for i := len(xcodeList) - 1; i >= 0; i-- {
+			if model.EqualsForShortVersion(xcodeList[i].Version.Short, v) {
+				_, execError := function.ExecXcodeSelectSwitchOutput(xcodeList[i].AppPath + function.PathToDeveloperDirectoryPath)
 				if execError == nil {
-					fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcodeLists[i].Version.Short), model.GetProductBuildVersionInString(xcodeLists[i].Version.ProductBuild))
+					fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcodeList[i].Version.Short), model.GetProductBuildVersionInString(xcodeList[i].Version.ProductBuild))
 					return 0
 				} else {
 					fmt.Printf(FailInSwitching, model.GetShortVersionInString(v))
@@ -38,9 +39,11 @@ func (c *SwitchCommand) Run(args []string) int {
 			}
 		}
 		fmt.Printf(FailInFindingXcode, model.GetShortVersionInString(v))
+
 	} else if model.IsProductBuildVersion(args[0]) {
 		v, _ := model.NewProductBuildVersion(args[0])
-		for _, xcode := range xcodeLists {
+
+		for _, xcode := range xcodeList {
 			if model.EqualsForProductBuildVersion(xcode.Version.ProductBuild, v) {
 				_, execError := function.ExecXcodeSelectSwitchOutput(xcode.AppPath + function.PathToDeveloperDirectoryPath)
 				if execError == nil {
@@ -53,6 +56,7 @@ func (c *SwitchCommand) Run(args []string) int {
 			}
 		}
 		fmt.Printf(FailInFindingXcode, model.GetProductBuildVersionInString(v))
+
 	} else {
 		fmt.Printf(FailInGetVersion)
 	}

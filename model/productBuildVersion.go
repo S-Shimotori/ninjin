@@ -58,7 +58,6 @@ func EqualsForProductBuildVersion(pb0, pb1 productBuildVersion) bool {
 func IsProductBuildVersion(str string) bool {
 	pattern := `^[1-9][0-9]*[A-Z]([0-9a-z]*)$`
 	result, matchError := regexp.MatchString(pattern, str)
-
 	if matchError != nil {
 		return false
 	}
@@ -89,6 +88,7 @@ func GetExcessCompatibleProductBuildVersion(str string) (productBuildVersion, er
 		}
 
 		return productBuildVersion{major, string([]byte(minor)[0] + 1), ""}, nil
+		
 	} else {
 		return productBuild, errors.New("not product build version")
 	}

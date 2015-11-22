@@ -1,9 +1,9 @@
 package command
 
 import (
-	"strings"
 	"github.com/S-Shimotori/ninjin/model"
 	"github.com/S-Shimotori/ninjin/function"
+	"strings"
 	"fmt"
 )
 
@@ -12,12 +12,12 @@ type SwitchCompatibleCommand struct {
 }
 
 func (c *SwitchCompatibleCommand) Run(args []string) int {
-	// Write your code here
 	if len(args) == 0 {
 		fmt.Printf(FailInGetVersion)
 		return 1
 	}
-	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
+
+	xcodeList, xcodeError := function.GetXcodeList(function.ApplicationsPath)
 	if xcodeError != nil {
 		fmt.Printf(FailInMakingAListOfXcodes)
 		return 1
@@ -25,31 +25,33 @@ func (c *SwitchCompatibleCommand) Run(args []string) int {
 
 	if model.IsShortVersion(args[0]) {
 		v, _ := model.NewShortVersion(args[0])
+
 		excess, excessError := model.GetExcessCompatibleShortVersion(args[0])
 		if excessError != nil {
 			fmt.Printf(FailInGetVersion)
 			return 1
 		}
 
-		for i := len(xcodeLists) - 1; i >= 0; i-- {
-			if !model.EqualsForShortVersion(xcodeLists[i].Version.Short, v) && model.LessForShortVersion(xcodeLists[i].Version.Short, v) {
+		for i := len(xcodeList) - 1; i >= 0; i-- {
+			if !model.EqualsForShortVersion(xcodeList[i].Version.Short, v) && model.LessForShortVersion(xcodeList[i].Version.Short, v) {
 				break
 			}
-			if !model.EqualsForShortVersion(xcodeLists[i].Version.Short, excess) && model.LessForShortVersion(xcodeLists[i].Version.Short, excess) {
-				_, execError := function.ExecXcodeSelectSwitchOutput(xcodeLists[i].AppPath + function.PathToDeveloperDirectoryPath)
+			if !model.EqualsForShortVersion(xcodeList[i].Version.Short, excess) && model.LessForShortVersion(xcodeList[i].Version.Short, excess) {
+				_, execError := function.ExecXcodeSelectSwitchOutput(xcodeList[i].AppPath + function.PathToDeveloperDirectoryPath)
 				if execError == nil {
-					fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcodeLists[i].Version.Short), model.GetProductBuildVersionInString(xcodeLists[i].Version.ProductBuild))
+					fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcodeList[i].Version.Short), model.GetProductBuildVersionInString(xcodeList[i].Version.ProductBuild))
 					return 0
 				} else {
-					fmt.Printf(FailInSwitching, model.GetShortVersionInString(xcodeLists[i].Version.Short))
+					fmt.Printf(FailInSwitching, model.GetShortVersionInString(xcodeList[i].Version.Short))
 					return 1
 				}
 			}
 		}
-
 		fmt.Printf(FailInFindingXcodeCompatible, model.GetShortVersionInString(v))
+
 	} else if model.IsProductBuildVersion(args[0]) {
 		v, _ := model.NewProductBuildVersion(args[0])
+
 		excess, excessError := model.GetExcessCompatibleProductBuildVersion(args[0])
 		if excessError != nil {
 			fmt.Printf(FailInGetVersion)
@@ -66,7 +68,6 @@ func (c *SwitchCompatibleCommand) Run(args []string) int {
 			if !model.EqualsForProductBuildVersion(xcodeLists[i].Version.ProductBuild, v) && model.LessForProductBuildVersion(xcodeLists[i].Version.ProductBuild, v) {
 				break
 			}
-
 			if !model.EqualsForProductBuildVersion(xcodeLists[i].Version.ProductBuild, excess) && model.LessForProductBuildVersion(xcodeLists[i].Version.ProductBuild, excess) {
 				_, execError := function.ExecXcodeSelectSwitchOutput(xcodeLists[i].AppPath + function.PathToDeveloperDirectoryPath)
 				if execError == nil {
@@ -78,8 +79,8 @@ func (c *SwitchCompatibleCommand) Run(args []string) int {
 				}
 			}
 		}
-
 		fmt.Printf(FailInFindingXcodeCompatible, model.GetProductBuildVersionInString(v))
+
 	} else {
 		fmt.Printf(FailInGetVersion)
 	}

@@ -1,10 +1,10 @@
 package command
 
 import (
+	"github.com/S-Shimotori/ninjin/model"
 	"github.com/S-Shimotori/ninjin/function"
 	"strings"
 	"fmt"
-	"github.com/S-Shimotori/ninjin/model"
 )
 
 type SwitchLatestCommand struct {
@@ -12,18 +12,18 @@ type SwitchLatestCommand struct {
 }
 
 func (c *SwitchLatestCommand) Run(args []string) int {
-	// Write your code here
-	xcodeLists, xcodeError := function.GetXcodeList(function.ApplicationsPath)
+	xcodeList, xcodeError := function.GetXcodeList(function.ApplicationsPath)
 	if xcodeError != nil {
 		fmt.Printf(FailInMakingAListOfXcodes)
 		return 1
 	}
-	if len(xcodeLists) == 0 {
+
+	if len(xcodeList) == 0 {
 		fmt.Printf(FailInFindingXcodeLatest)
 		return 1
 	}
 
-	xcode := xcodeLists[len(xcodeLists) - 1]
+	xcode := xcodeList[len(xcodeList) - 1]
 	_, execError := function.ExecXcodeSelectSwitchOutput(xcode.AppPath + function.PathToDeveloperDirectoryPath)
 	if execError == nil {
 		fmt.Printf(SucceedInSwitching, model.GetShortVersionInString(xcode.Version.Short), model.GetProductBuildVersionInString(xcode.Version.ProductBuild))
@@ -32,6 +32,7 @@ func (c *SwitchLatestCommand) Run(args []string) int {
 		fmt.Printf(FailInSwitching, model.GetShortVersionInString(xcode.Version.Short) + " " + model.GetProductBuildVersionInString(xcode.Version.ProductBuild))
 		return 1
 	}
+
 }
 
 func (c *SwitchLatestCommand) Synopsis() string {
