@@ -28,16 +28,16 @@ func TestSort(t *testing.T) {
 	for i, j := 0, len(descending) - 1; i < j; i, j = i + 1, j - 1 {
 		descending[i], descending[j] = descending[j], descending[i]
 	}
-	var reverse []version = make([]version, len(versions))
-	perm := rand.Perm(len(reverse))
+	var random []version = make([]version, len(versions))
+	perm := rand.Perm(len(random))
 	for i, v := range perm {
-		reverse[v] = versions[i]
+		random[v] = versions[i]
 	}
 
 	testList := [][]version{
 		ascending,
 		descending,
-		reverse,
+		random,
 	}
 
 	for _, array := range testList {
